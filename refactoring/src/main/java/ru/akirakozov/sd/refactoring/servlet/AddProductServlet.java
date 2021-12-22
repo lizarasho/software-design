@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ru.akirakozov.sd.refactoring.database.ProductsDatabaseManager;
 import ru.akirakozov.sd.refactoring.html.ProductsHtmlBuilder;
 import ru.akirakozov.sd.refactoring.products.Product;
 import ru.akirakozov.sd.refactoring.products.ProductsManager;
@@ -15,8 +14,8 @@ import ru.akirakozov.sd.refactoring.products.ProductsManager;
  */
 public class AddProductServlet extends BaseProductsServlet {
 
-    public AddProductServlet(ProductsHtmlBuilder htmlBuilder) {
-        super(htmlBuilder);
+    public AddProductServlet(ProductsManager manager, ProductsHtmlBuilder htmlBuilder) {
+        super(manager, htmlBuilder);
     }
 
     @Override
@@ -26,11 +25,7 @@ public class AddProductServlet extends BaseProductsServlet {
                 Long.parseLong(request.getParameter("price"))
         );
 
-        try (ProductsManager productsManager = new ProductsDatabaseManager("jdbc:sqlite:test.db")) {
-            productsManager.addProduct(product);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        productsManager.addProduct(product);
 
         htmlBuilder.buildAddProductHtml(product, response.getWriter());
         setOkHtmlResponse(response);
